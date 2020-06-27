@@ -2,9 +2,10 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 import UploadsList from "./uploads";
 
-const Uploads = (props) => {
-  if (props.user) {
-    return <UploadsList user={props.user} route={props.route} />;
+const Uploads = () => {
+  const auth = JSON.parse(localStorage.getItem("checker"));
+  if (auth) {
+    return <UploadsList user={auth} />;
   } else {
     return (
       <Redirect

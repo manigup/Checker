@@ -26,11 +26,13 @@ import {
 } from "@material-ui/core";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import AddIcon from "@material-ui/icons/Add";
+import DoneIcon from "@material-ui/icons/Done";
+import CloseIcon from "@material-ui/icons/Close";
 import { firestore, storage } from "../firebase";
 
 const StyledTableCell = withStyles(() => ({
   head: {
-    backgroundColor: colors.grey[50],
+    backgroundColor: colors.grey[200],
     fontWeight: "bold",
   },
   body: {
@@ -52,9 +54,21 @@ const useStyles = makeStyles((theme) => ({
     display: "none",
   },
   add: {
-    backgroundColor: colors.grey[100],
+    backgroundColor: colors.blueGrey[100],
+    padding: 5,
   },
-  index: { zIndex: 150 },
+  header: {
+    backgroundColor: colors.cyan[600],
+    color: colors.lime[50],
+    padding: 10,
+  },
+  backdrop: {
+    zIndex: theme.zIndex.modal + 100,
+    color: "#fff",
+  },
+  chip: {
+    height: 25,
+  },
 }));
 
 const Student = (props) => {
@@ -180,7 +194,7 @@ const Student = (props) => {
 
   return (
     <Container component="main" maxWidth="md">
-      <Backdrop open={loader} className={classes.index}>
+      <Backdrop open={loader} className={classes.backdrop}>
         <CircularProgress color="inherit" />
       </Backdrop>
       <Dialog
@@ -192,7 +206,7 @@ const Student = (props) => {
       >
         <DialogTitle id="form-dialog-title">New Upload</DialogTitle>
         <DialogContent>
-          <form autoComplete="false" onSubmit={onUpload}>
+          <form onSubmit={onUpload}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12}>
                 <TextField
@@ -203,7 +217,7 @@ const Student = (props) => {
                   name="report"
                   label="Report To"
                   select
-                  autoFocus
+                  autoComplete="false"
                   value={report}
                   onChange={onChangeHandler}
                 >
@@ -223,6 +237,7 @@ const Student = (props) => {
                   name="assignment"
                   label="Assignment"
                   select
+                  autoComplete="false"
                   value={assignment}
                   onChange={onChangeHandler}
                 >
@@ -271,6 +286,7 @@ const Student = (props) => {
       <div className={classes.paper}>
         <Card>
           <CardHeader
+            className={classes.header}
             action={
               <IconButton
                 aria-label="add"
@@ -303,7 +319,15 @@ const Student = (props) => {
                     <StyledTableCell>{row.date}</StyledTableCell>
                     <StyledTableCell>
                       <Chip
+                        className={classes.chip}
                         label={row.status}
+                        icon={
+                          row.status === "Not Checked" ? (
+                            <CloseIcon />
+                          ) : (
+                            <DoneIcon />
+                          )
+                        }
                         color={
                           row.status === "Not Checked" ? "secondary" : "primary"
                         }

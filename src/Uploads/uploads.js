@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useRouteMatch, Link } from "react-router-dom";
 import { withStyles, makeStyles } from "@material-ui/core/styles";
 import {
   Container,
@@ -16,10 +16,12 @@ import {
   Chip,
 } from "@material-ui/core";
 import { firestore } from "../firebase";
+import DoneIcon from "@material-ui/icons/Done";
+import CloseIcon from "@material-ui/icons/Close";
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
-    backgroundColor: colors.grey[50],
+    backgroundColor: colors.grey[200],
     fontWeight: "bold",
   },
   body: {
@@ -34,17 +36,25 @@ const useStyles = makeStyles((theme) => ({
   content: {
     padding: 0,
   },
+  header: {
+    backgroundColor: colors.cyan[600],
+    color: colors.lime[50],
+    padding: 10,
+  },
+  chip: {
+    height: 25,
+  },
 }));
 
 const UploadsList = (props) => {
-  const history = useHistory();
+  const match = useRouteMatch();
   const classes = useStyles();
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
     firestore
       .collection("uploads")
-      .where("aid", "==", props.route.match.params.aid)
+      .where("aid", "==", match.params.aid)
       .get()
       .then((result) => {
         const data = [];
@@ -56,15 +66,11 @@ const UploadsList = (props) => {
       .catch((error) => {});
   }, []);
 
-  const onTableRowClick = (file) => {
-    history.push("/pdf/" + file);
-  };
-
   return (
     <Container component="main" maxWidth="md">
       <div className={classes.paper}>
         <Card>
-          <CardHeader title="Uploads" />
+          <CardHeader className={classes.header} title="Uploads" />
           <Divider />
           <CardContent className={classes.content}>
             <Table aria-label="customized table">
@@ -79,17 +85,26 @@ const UploadsList = (props) => {
               </TableHead>
               <TableBody>
                 {rows.map((row, index) => (
-                  <TableRow
-                    key={index}
-                    onClick={() => onTableRowClick(row.originalfile)}
-                  >
+                  <TableRow key={index}>
                     <StyledTableCell>{index + 1}</StyledTableCell>
                     <StyledTableCell>{row.email}</StyledTableCell>
                     <StyledTableCell>{row.date}</StyledTableCell>
-                    <StyledTableCell>{row.originalfile}</StyledTableCell>
+                    <StyledTableCell>
+                      <Link to={`/pdf/${row.originalfile}`}>
+                        {row.originalfile}
+                      </Link>
+                    </StyledTableCell>
                     <StyledTableCell>
                       <Chip
                         label={row.status}
+                        className={classes.chip}
+                        icon={
+                          row.status === "Not Checked" ? (
+                            <CloseIcon />
+                          ) : (
+                            <DoneIcon />
+                          )
+                        }
                         color={
                           row.status === "Not Checked" ? "secondary" : "primary"
                         }

@@ -19,13 +19,15 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  Chip,
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
+import SearchIcon from "@material-ui/icons/Search";
 import { firestore } from "../firebase";
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
-    backgroundColor: colors.grey[50],
+    backgroundColor: colors.grey[200],
     fontWeight: "bold",
   },
   body: {
@@ -43,8 +45,20 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(2, 0, 2),
   },
+  input: {
+    display: "none",
+  },
   add: {
-    backgroundColor: colors.grey[100],
+    backgroundColor: colors.blueGrey[100],
+    padding: 5,
+  },
+  header: {
+    backgroundColor: colors.cyan[600],
+    color: colors.lime[50],
+    padding: 10,
+  },
+  chip: {
+    height: 25,
   },
 }));
 
@@ -111,13 +125,15 @@ const Teacher = (props) => {
   return (
     <Container component="main" maxWidth="sm">
       <Dialog
+        fullWidth
+        maxWidth="xs"
         open={open}
         onClose={onDialogClose}
         aria-labelledby="form-dialog-title"
       >
         <DialogTitle id="form-dialog-title">New Assignment</DialogTitle>
         <DialogContent>
-          <form autoComplete="false" onSubmit={onSave}>
+          <form onSubmit={onSave}>
             <TextField
               variant="outlined"
               margin="normal"
@@ -126,7 +142,7 @@ const Teacher = (props) => {
               id="name"
               label="Assignment Name"
               name="name"
-              autoFocus
+              autoComplete="false"
               onChange={onChangeHandler}
             />
             <Button
@@ -145,6 +161,7 @@ const Teacher = (props) => {
       <div className={classes.paper}>
         <Card>
           <CardHeader
+            className={classes.header}
             action={
               <IconButton
                 aria-label="add"
@@ -164,17 +181,24 @@ const Teacher = (props) => {
                   <StyledTableCell>Sr No.</StyledTableCell>
                   <StyledTableCell>Name</StyledTableCell>
                   <StyledTableCell>Aid</StyledTableCell>
+                  <StyledTableCell>Action</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {rows.map((row, index) => (
-                  <TableRow
-                    key={index}
-                    onClick={() => onTableRowClick(row.aid)}
-                  >
+                  <TableRow key={index}>
                     <StyledTableCell>{index + 1}</StyledTableCell>
                     <StyledTableCell>{row.name}</StyledTableCell>
                     <StyledTableCell>{row.aid}</StyledTableCell>
+                    <StyledTableCell>
+                      <Chip
+                        label="Details"
+                        className={classes.chip}
+                        icon={<SearchIcon />}
+                        color="primary"
+                        onClick={() => onTableRowClick(row.aid)}
+                      />
+                    </StyledTableCell>
                   </TableRow>
                 ))}
               </TableBody>

@@ -3,8 +3,9 @@ import { Redirect } from "react-router-dom";
 import Viewer from "./viewer";
 
 const PDFViewer = (props) => {
-  if (props.user) {
-    return <Viewer user={props.user} route={props.route} />;
+  const auth = JSON.parse(localStorage.getItem("checker"));
+  if (auth) {
+    return <Viewer user={auth} />;
   } else {
     return (
       <Redirect
